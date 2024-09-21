@@ -1,0 +1,129 @@
+body {
+  font-family: "Lato", sans-serif;
+  text-align: center;
+  font-size: 16px;
+  caret-color: transparent;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  min-height: 65vh;
+}
+
+section {
+  text-align: center;
+  padding: 30px;
+  background: #e5eaf5c0;
+}
+
+.hidden {
+  display: none;
+}
+
+#field {
+  padding: 30px;
+  min-width: 20vh;
+}
+
+#container {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+    align-items: center;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.cell {
+  font-family: "Finger Paint", sans-serif;
+  color: #232d55;
+  box-shadow: 0 0 0 1px #6e92a3;
+  border: 1px solid #6e92a3;
+  cursor: pointer;
+  line-height: 1em;
+  background: #a0d2ebc0;
+}
+
+.sidebar {
+  width: 125px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#status {
+  flex: 4;
+}
+
+#titleTurns {
+  font-size: 0.8em;
+}
+#numberTurns {
+  font-size: 1.4em;
+  margin: 0;
+}
+
+/* button style */
+.button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.game-button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #ff6b6b, #f06595);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.game-button:hover {
+  background: linear-gradient(45deg, #f06595, #ff6b6b);
+  transform: translateY(-5px);
+}
+
+.game-button:active {
+  transform: translateY(2px);
+}
+
+#randomGame {
+  background: linear-gradient(45deg, #48cae4, #00b4d8);
+}
+
+#randomGame:hover {
+  background: linear-gradient(45deg, #00b4d8, #48cae4);
+}
+
+#createGame {
+  background: linear-gradient(45deg, #fca311, #f77f00);
+}
+
+#createGame:hover {
+  background: linear-gradient(45deg, #f77f00, #fca311);
+}
+
+#JoinToGame {
+  background: linear-gradient(45deg, #06d6a0, #118ab2);
+}
+
+#JoinToGame:hover {
+  background: linear-gradient(45deg, #118ab2, #06d6a0);
+}
+
+#messages {
+  background-color: #0d1117;
+  padding: 20px 0px;
+  color: #fff;
+  border-radius: 10px;
+}

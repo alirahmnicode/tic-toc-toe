@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <section id="field"></section>
+    <div class="content">
+      <div>
+        <p>Welcome to Tic-Toc-Game</p>
+      </div>
+      <ul id="messages">
+        <li>messages:</li>
+      </ul>
+      <div class="button-container">
+        <button class="game-button" id="randomGame">Join to Random Game</button>
+        <button class="game-button" id="createGame" onclick="createGame()">
+          Create New Game
+        </button>
+        <div>
+          <input
+            type="text"
+            id="gameId"
+            placeholder="game id..."
+            style="width: 200px; height: 30px"
+          />
+          <button class="game-button" id="JoinToGame" onclick="joinToGame()">
+            Join
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
