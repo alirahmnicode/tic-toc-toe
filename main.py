@@ -1,11 +1,11 @@
-import json
+import random
 import uuid
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from game import Player, TicTacToeGame, Move
+from game import Player, TicTacToeGame
 
 
 app = FastAPI()
@@ -32,6 +32,7 @@ players = {}
 async def game(websocket: WebSocket):
     await websocket.accept()
     player = Player(id=str(uuid.uuid4()), label="X", color="green")
+    game: TicTacToeGame = None
     players[player.id] = websocket
 
     while True:
@@ -40,7 +41,6 @@ async def game(websocket: WebSocket):
             game = TicTacToeGame(players=(player,))
             games[game._game_id] = game
             payload = {"method": "CreateGame", "status": "ok", "message": game._game_id}
-            print(payload)
             await websocket.send_json(payload)
         elif data["method"] == "JoinToGame":
             player.label = "O"
@@ -57,16 +57,17 @@ async def game(websocket: WebSocket):
             payload = {"method": "HandleMove", "status": "ok", "has_winner": False}
 
             if row is not None and col is not None:
+                print(player.id)
                 game.play(row, col)
 
                 # send this move to the next player
                 # in play() method the toggle_player() method is called
                 player_id = game.current_player.id
                 player_ws: WebSocket = players.get(player_id)
+                print(player_id)
                 if player_ws:
                     move = f"{row}_{col}"
                     payload["message"] = move
-                    print(payload)
                     await player_ws.send_json(payload)
 
                 # if the game hss winner send winner compos to both players
@@ -79,3 +80,19 @@ async def game(websocket: WebSocket):
                         await player_ws.send_json(payload)
             else:
                 print(row, col)
+        elif data["method"] == "JoinToRandomGame":
+            player.label = "O"
+            payload = {
+                "method": "JoinToRandomGame",
+            }
+            player_ws: WebSocket = players.get(player.id)
+            if len(games) > 0:
+                game = random.choice(list(games.values()))
+                game.add_player(player)
+                payload["message"] = "You have joined the game successfully!"
+                payload["status"] = "ok"
+                await player_ws.send_json(payload)
+            else:
+                payload["message"] = "There is no any game!"
+                payload["status"] = "NotFound"
+                await player_ws.send_json(payload)

@@ -1,5 +1,6 @@
 var userId;
-var ws = new WebSocket("ws://localhost:81/ws/game");
+// var ws = new WebSocket("ws://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
+var ws = new WebSocket("ws://localhost:8000/ws/game");
 
 let gameActive = true;
 let currentPlayer = "X";
@@ -43,6 +44,12 @@ function joinToGame() {
     }
 }
 
+function JoinToRandomGame() {
+    ws.send('{"method":"JoinToRandomGame"}');
+    myTurn = false
+    myLabel = "O"
+}
+
 function appendMessage(message) {
     messageBox = document.createElement("li")
     messageBox.innerHTML = message
@@ -53,7 +60,6 @@ ws.onmessage = function (event) {
     var method, status
 
     try {
-        console.log(event.data)
         var payload = JSON.parse(event.data)
         method = payload.method
         status = payload.status
@@ -88,6 +94,11 @@ ws.onmessage = function (event) {
         }
     } else if (method == "CreateGame") {
         appendMessage(message)
+    } else if (method == "JoinToRandomGame") {
+        if (status == "ok") {
+            handleStart()
+            appendMessage(message)
+        }
     }
 };
 
@@ -133,14 +144,7 @@ let drawField = () => {
 function winnActions(winnerCombo) {
 
     gameActive = false
-    // statusDisplay.innerHTML = winnMessage()
-    // statusDisplay.style.color = '#139de2'
-
     let cell
-    // for (let i = 0; i < winner.length; i++) {
-    //     cell = document.getElementById(`${winner[i][0]}_${winner[i][1]}`)
-    //     cell.style.color = '#139de2'
-    // }
     winnerCombo.forEach(cell => {
         cell = document.getElementById(`${cell[0]}_${cell[1]}`)
         cell.style.color = '#139de2'
@@ -187,6 +191,5 @@ let handleClick = (event) => {
 
 let handleMove = (move) => {
     var label = myLabel == "X" ? "O" : "X"
-    console.log(move)
     document.getElementById(move).innerHTML = label
 }
