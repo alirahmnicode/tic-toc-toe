@@ -1,6 +1,6 @@
 var userId;
-// var ws = new WebSocket("ws://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
-var ws = new WebSocket("ws://localhost:8000/ws/game");
+var ws = new WebSocket("wss://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
+// var ws = new WebSocket("ws://localhost:8000/ws/game");
 
 let gameActive = true;
 let currentPlayer = "X";
@@ -34,7 +34,7 @@ function joinToGame() {
     gameId = document.getElementById("gameId").value;
     if (gameId != "" && gameId != undefined) {
         // request to join to the game
-        var payload = `{"method":"JoinToGame","game_id":"${gameId}"}`
+        var payload = `{"method":"JoinToGame","gameId":"${gameId}"}`
         console.log(payload)
         ws.send(payload);
         myTurn = false
@@ -93,9 +93,12 @@ ws.onmessage = function (event) {
             }
         }
     } else if (method == "CreateGame") {
+        gameId = payload.gameId
+        message = `The game id is ${gameId}`
         appendMessage(message)
     } else if (method == "JoinToRandomGame") {
         if (status == "ok") {
+            gameId = payload.game_id
             handleStart()
             appendMessage(message)
         }
@@ -179,7 +182,7 @@ let handleClick = (event) => {
         let i = +clickedIndex[0]
         let j = +clickedIndex[1]
 
-        ws.send(`{"method":"HandleMove", "row":${i}, "column":"${j}"}`)
+        ws.send(`{"method":"HandleMove", "row":${i}, "column":"${j}", "gameID":"${gameId}"}`)
         if (gameState[i][j] !== 0 || !gameActive)
             return
 
