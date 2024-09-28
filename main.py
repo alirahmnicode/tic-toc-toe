@@ -41,7 +41,7 @@ async def game(websocket: WebSocket):
             data = await websocket.receive_json()
 
             if data["method"] == "CreateGame":
-                game = TicTacToeGame(players=(player,))
+                game = TicTacToeGame(players=(player,), game_id=player.id)
                 games[game._game_id] = game
                 await create_game(game, manager, websocket)
             elif data["method"] == "JoinToGame":
@@ -61,3 +61,9 @@ async def game(websocket: WebSocket):
                 await join_random_game(game, player, manager, websocket)
     except WebSocketDisconnect:
         manager.disconnect(player.id)
+        print(games)
+        # remove the game for this player
+        game = games.get(player.id)
+        if game:
+            games.pop(player.id)
+        print(games)

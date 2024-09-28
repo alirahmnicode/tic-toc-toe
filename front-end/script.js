@@ -1,6 +1,6 @@
 var userId;
-var ws = new WebSocket("wss://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
-// var ws = new WebSocket("ws://localhost:8000/ws/game");
+// var ws = new WebSocket("wss://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
+var ws = new WebSocket("ws://localhost:8000/ws/game");
 
 let gameActive = true;
 let currentPlayer = "X";
@@ -64,6 +64,7 @@ ws.onmessage = function (event) {
         method = payload.method
         status = payload.status
         message = payload.message
+        console.log(payload)
     }
     catch (err) {
         console.log(err)
@@ -102,6 +103,8 @@ ws.onmessage = function (event) {
             handleStart()
             appendMessage(message)
         }
+    } else if (method == "Alert") {
+        handleAlert(payload.status, payload.message)
     }
 };
 
@@ -195,4 +198,24 @@ let handleClick = (event) => {
 let handleMove = (move) => {
     var label = myLabel == "X" ? "O" : "X"
     document.getElementById(move).innerHTML = label
+}
+
+let handleAlert = (status, message) => {
+    // create alert
+    html = `<div class="toast ${status}">
+          <div class="container-1">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="container-2">
+            <p>${status}</p>
+            <p>${message}</p>
+          </div>
+          <button>&times;</button>
+        </div>`
+    document.getElementsByClassName("wrapper")[0].innerHTML = html
+    setTimeout(removeAlert, 3000)
+}
+
+function removeAlert() {
+    document.getElementsByClassName("wrapper")[0].innerHTML = ""
 }

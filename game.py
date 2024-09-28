@@ -22,10 +22,11 @@ BOARD_SIZE = 3
 
 
 class TicTacToeGame:
-    def __init__(self, players: tuple, board_size=BOARD_SIZE):
+    def __init__(self, players: tuple, game_id: str, board_size=BOARD_SIZE):
+        """The game_id is the owner player of the game"""
         self._players = cycle(players)
         self.players = players
-        self._game_id = str(uuid.uuid4())
+        self._game_id = game_id
         self.board_size = board_size
         self.current_player = next(self._players)
         self.winner_combo = []
@@ -82,7 +83,7 @@ class TicTacToeGame:
         no_winner = not self._has_winner
         played_moves = (move.label for row in self._current_moves for move in row)
         return no_winner and all(played_moves)
- 
+
     def reset_game(self):
         """Reset the game state to play again."""
         for row, row_content in enumerate(self._current_moves):
@@ -112,6 +113,7 @@ class TicTacToeGame:
             else:
                 msg = f"{self.current_player.label}'s turn"
             self.toggle_player()
+
 
 def main():
     """Create the game's board and run its main loop."""

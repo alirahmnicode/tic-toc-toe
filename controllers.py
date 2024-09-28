@@ -41,10 +41,15 @@ async def join_random_game(
         payload["message"] = "You have joined the game successfully!"
         payload["status"] = "ok"
         payload["game_id"] = game._game_id
+        # send message to other player
+        alert_message = "A random player has joined the game!"
+        await ws_manager.send(
+            payload=get_alert_payload(status="success", message=alert_message),
+            user_id=game._game_id,
+        )
     else:
         payload["message"] = "There is no any game!"
         payload["status"] = "NotFound"
-    print("4 ", payload)
     await ws_manager.send(payload=payload, websocket=websocket)
 
 
@@ -70,3 +75,10 @@ async def handle_move(
                     await ws_manager.send(payload=payload, user_id=player.id)
         else:
             raise Exception("game dose not exist")
+
+
+def get_alert_payload(status, message):
+    payload = {"method": "Alert"}
+    payload["status"] = status
+    payload["message"] = message
+    return payload
