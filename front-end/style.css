@@ -181,10 +181,10 @@ section {
 .container-2 p:first-child {
   color: #101020;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 24px;
 }
 .container-2 p:last-child {
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 400;
   color: #656565;
 }

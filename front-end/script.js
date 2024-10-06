@@ -1,6 +1,7 @@
 var userId;
-// var ws = new WebSocket("wss://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
-var ws = new WebSocket("ws://localhost:8000/ws/game");
+var ws = new WebSocket("wss://happy-ortensia-alirh-94121905.koyeb.app/ws/game");
+// var ws = new WebSocket("ws://localhost:8000/ws/game");
+
 
 let gameActive = true;
 let currentPlayer = "X";
@@ -9,6 +10,9 @@ let rows = 3;
 let cols = 3;
 let steps,
     counter = 0;
+let reconnectInterval = 5000;
+let maxRetries = 10; // Maximum number of reconnection attempts
+let retries = 0;
 
 const messages = document.getElementById("messages");
 const statusDisplay = document.getElementById("status");
@@ -20,6 +24,7 @@ var myTurn = false
 var gameId
 var message
 var messageBox
+
 
 function createGame() {
     ws.send('{"method":"CreateGame"}');
@@ -70,7 +75,6 @@ ws.onmessage = function (event) {
         console.log(err)
     }
     finally {
-        console.log(JSON.parse(event.data))
         console.log("end")
     }
 
@@ -96,6 +100,7 @@ ws.onmessage = function (event) {
     } else if (method == "CreateGame") {
         gameId = payload.gameId
         message = `The game id is ${gameId}`
+        console.log(message)
         appendMessage(message)
     } else if (method == "JoinToRandomGame") {
         if (status == "ok") {
@@ -108,7 +113,42 @@ ws.onmessage = function (event) {
     }
 };
 
+ws.onopen = () => {
+    handleAlert("success", "Connection is established")
+}
 
+ws.onclose = () => {
+    handleAlert("warning", "Connection is closed")
+    handleReconnect()
+}
+
+function connect() {
+    // Establish a new WebSocket connection
+    ws = new WebSocket("ws://your-websocket-url");
+
+    // Listen for connection opening
+    ws.onopen = function () {
+        console.log("Connected to the WebSocket server");
+        retries = 0; // Reset the retry counter on successful connection
+    };
+
+    // Listen for connection closing
+    ws.onclose = function () {
+        console.log("WebSocket connection closed");
+        handleReconnect(); // Try to reconnect when the connection closes
+    };
+
+    // Listen for errors
+    ws.onerror = function (error) {
+        console.log("WebSocket error:", error);
+        ws.close(); // Close the connection if an error occurs
+    };
+
+    // Listen for messages
+    ws.onmessage = function (event) {
+        console.log("Message from server:", event.data);
+    };
+}
 //   crate matrix
 let createMatrix = () => {
     let arr;
@@ -119,7 +159,6 @@ let createMatrix = () => {
         }
         gameState[i] = arr;
     }
-    console.log(gameState);
 };
 
 let drawField = () => {
@@ -210,12 +249,23 @@ let handleAlert = (status, message) => {
             <p>${status}</p>
             <p>${message}</p>
           </div>
-          <button>&times;</button>
         </div>`
     document.getElementsByClassName("wrapper")[0].innerHTML = html
-    setTimeout(removeAlert, 3000)
+    setTimeout(removeAlert, 21000)
 }
 
 function removeAlert() {
     document.getElementsByClassName("wrapper")[0].innerHTML = ""
 }
+
+let handleReconnect = () => {
+    if (retries < maxRetries) {
+        retries++;
+        handleAlert("info", `Attempting to reconnect... (${retries}/${maxRetries})`)
+        setTimeout(connect, reconnectInterval);
+    } else {
+        handleAlert("info", "Max retries reached. Could not reconnect.")
+    }
+}
+
+handleAlert("info", "Connecting to game...")
