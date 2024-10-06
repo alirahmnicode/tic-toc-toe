@@ -1,4 +1,3 @@
-import random
 from fastapi import WebSocket
 from connection import ConnectionManager
 from game import TicTacToeGame
@@ -21,11 +20,26 @@ async def join_game(
 ):
     player.label = "O"
     if game is not None:
-        game.add_player(player)
-        payload = {"method": "JoinToGame", "status": "ok"}
-        await ws_manager.send(payload=payload, websocket=websocket)
+        if len(game.players) <= 1:
+            game.add_player(player)
+            payload = {"method": "JoinToGame", "status": "ok"}
+            await ws_manager.send(payload=payload, websocket=websocket)
+        else:
+            message = "The game is playing by tow players."
+            await send_alert(
+                ws_manager=ws_manager,
+                websocket=websocket,
+                status="error",
+                message=message,
+            )
     else:
-        print("game is not exist")
+        message = "The game is not exist."
+        await send_alert(
+            ws_manager=ws_manager,
+            websocket=websocket,
+            status="error",
+            message=message,
+        )
 
 
 # join to a random game
@@ -75,6 +89,16 @@ async def handle_move(
                     await ws_manager.send(payload=payload, user_id=player.id)
         else:
             raise Exception("game dose not exist")
+
+
+async def send_alert(
+    ws_manager: ConnectionManager,
+    websocket: WebSocket,
+    status: str,
+    message: str,
+):
+    payload = get_alert_payload(status=status, message=message)
+    await ws_manager.send(websocket=websocket, payload=payload)
 
 
 def get_alert_payload(status, message):
