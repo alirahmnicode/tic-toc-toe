@@ -19,22 +19,19 @@ This is a simple **Tic-Tac-Toe** game built with **HTML, CSS, JavaScript**, and 
    pip install requirements.txt
 3. Run development mode
    ```bach
-   fastapi dev main.py
-4. Run front-end
-
-  open index.html in a new tab
+   cd src && fastapi dev main.py
 
 ## Project Structure
 
 ```md
-├── connection.py #manage socket connections
-├── controllers.py
+├── src
+│   ├── main.py
+│   ├── controllers.py
+│   ├── connections.py
+|   └── game.py
 ├── Dockerfile
-├── front-end
-│   ├── index.html
-│   ├── script.js
-│   └── style.css
-├── game.py
-├── main.py
+├── .dockerignore
+├── .gitignore
+├── README.md
 └── requirements.txt
 ```
